@@ -7,22 +7,23 @@ import UserPage from './pages/UserPage';
 import LogoutButton from './components/LogOutButton';
 
 interface User {
-  username: string;
+  email: string;
   role: string;
 }
 
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
 
-  const handleLogin = async (username: string, password: string) => {
+  const handleLogin = async (email: string, password: string) => {
     try {
       const response = await axios.post('https://localhost:44338/api/Auth/login', {
-        username,
+        email,
         password,
       });
+      console.log(response);
 
       const { username: responseUsername, role } = response.data;
-      setUser({ username: responseUsername, role });
+      setUser({ email: responseUsername, role });
     } catch (error) {
       console.error(error);
     }
