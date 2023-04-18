@@ -8,7 +8,6 @@ import LogoutButton from './components/LogOutButton';
 import jwt_decode from "jwt-decode";
 interface User {
   email: string;
-  email: string;
   role: string;
 }
 
@@ -17,6 +16,7 @@ const App = () => {
   interface DecodedToken {
     email: string;
     role: string;
+    
   }
   useEffect(() => {
     console.log(user,"userrrr");
@@ -25,13 +25,16 @@ const App = () => {
     try {
       const response = await axios.post('https://localhost:44338/api/Auth/login', {
         email,
-        email,
         password,
       });
       const token = (response.data.token.result);
       console.log(token);
       const decoded: DecodedToken = jwt_decode(token);
-      console.log(decoded);
+    
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+
+console.log(decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
+      console.log(decoded,"roleee");
       
       const { email: responseEmail, role } = decoded;
       setUser({ email: responseEmail, role });
