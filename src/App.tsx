@@ -1,28 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import LoginForm from './pages/LoginForm';
 import AdminPage from './pages/AdminPage';
 import UserPage from './pages/UserPage';
 import LogoutButton from './components/LogOutButton';
-
+import jwt_decode from "jwt-decode";
 interface User {
-  username: string;
+  email: string;
   role: string;
 }
 
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
-
-  const handleLogin = async (username: string, password: string) => {
+  interface DecodedToken {
+    email: string;
+    role: string;
+  }
+  useEffect(() => {
+    console.log(user,"userrrr");
+  }, [user]);
+  const handleLogin = async (email: string, password: string) => {
     try {
       const response = await axios.post('https://localhost:44338/api/Auth/login', {
-        username,
+        email,
         password,
       });
-
-      const { username: responseUsername, role } = response.data;
-      setUser({ username: responseUsername, role });
+      const token = (response.data.token.result);
+      console.log(token);
+      const decoded: DecodedToken = jwt_decode(token);
+      console.log(decoded);
+      
+      const { email: responseEmail, role } = decoded;
+      setUser({ email: responseEmail, role });
+      console.log(user,"user")
     } catch (error) {
       console.error(error);
     }
