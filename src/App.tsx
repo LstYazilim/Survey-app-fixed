@@ -16,7 +16,7 @@ const App = () => {
 
   const handleLogin = async (username: string, password: string) => {
     try {
-      const response = await axios.post('/api/login', {
+      const response = await axios.post('https://localhost:44338/api/Auth/login', {
         username,
         password,
       });
@@ -38,23 +38,24 @@ const App = () => {
     )} />
   );
 
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={user ? <Navigate to='/dashboard' /> : <LoginForm onLogin={handleLogin} />} />
-        <PrivateRoute path='/dashboard' element={() => {
-          if (user?.role === 'admin') {
-            return <AdminPage />;
-          } else if (user?.role === 'user') {
-            return <UserPage />;
-          } else {
-            return <div>Unknown role</div>;
-          }
-        }} />
-      </Routes>
+return (
+  <>
+ <BrowserRouter>
+        <Routes>
+          <Route path='/' element={user ? <Navigate to='/dashboard' /> : <LoginForm onLogin={handleLogin} />} />
+          <Route path='/dashboard' element={<PrivateRoute element={() => {
+            if (user?.role === 'admin') {
+              return <AdminPage />;
+            } else if (user?.role === 'user') {
+              return <UserPage />;
+            } else {
+              return <div>Unknown role</div>;
+            }
+          }} />} />
+        </Routes>
+      </BrowserRouter>
       {user && <LogoutButton onLogout={handleLogout} />}
-    </BrowserRouter>
-  );
-};
-
+  </>
+);
+      }
 export default App;
