@@ -8,6 +8,7 @@ import LogoutButton from './components/LogOutButton';
 import jwt_decode from "jwt-decode";
 interface User {
   email: string;
+  email: string;
   role: string;
 }
 
@@ -23,6 +24,7 @@ const App = () => {
   const handleLogin = async (email: string, password: string) => {
     try {
       const response = await axios.post('https://localhost:44338/api/Auth/login', {
+        email,
         email,
         password,
       });
