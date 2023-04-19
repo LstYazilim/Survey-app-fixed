@@ -9,6 +9,7 @@ import jwt_decode from "jwt-decode";
 interface User {
   email: string;
   role: string;
+  decodedToken: string;
 }
 
 const App = () => {
@@ -31,14 +32,18 @@ const App = () => {
       console.log(token);
       const decoded: DecodedToken = jwt_decode(token);
     
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-
+      const decodedToken :any= JSON.parse(atob(token.split('.')[1]));
+      console.log(decodedToken,"decodedToken");
 console.log(decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
-      console.log(decoded,"roleee");
       
-      const { email: responseEmail, role } = decoded;
-      setUser({ email: responseEmail, role });
-      console.log(user,"user")
+      
+    const user = {
+  email: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+  role: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],decodedToken: decodedToken
+};
+      
+      setUser(user);
+    
     } catch (error) {
       console.error(error);
     }
@@ -49,21 +54,21 @@ console.log(decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claim
   };
 
   const PrivateRoute = ({ element: Component, ...rest }: any) => (
-    <Route {...rest} match={(matchProps:any) => (
-      user ? <Component {...matchProps} /> : <Navigate to='/' />
+    <Route {...rest} element={(props:any) => (
+      user ? <Component {...props} /> : <Navigate to='/' />
     )} />
   );
 
 return (
   <>
- <BrowserRouter>
+   <BrowserRouter>
         <Routes>
           <Route path='/' element={user ? <Navigate to='/dashboard' /> : <LoginForm onLogin={handleLogin} />} />
           <Route path='/dashboard' element={<PrivateRoute element={() => {
             if (user?.role === 'admin') {
-              return <AdminPage />;
+              return <AdminPage/>;
             } else if (user?.role === 'user') {
-              return <UserPage />;
+              return <UserPage/>;
             } else {
               return <div>Unknown role</div>;
             }
